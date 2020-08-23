@@ -2,10 +2,10 @@ const Server = require('./src/server')
 
 const app = new Server()
 
-
 app.get('/', (req, res) => {
-	res.send(req.query || 'Enter a query string')
+	res.send('lmao')
 })
+
 app.post('/', (req, res) => {
 	res.send(req.body)
 	console.log(req.body)

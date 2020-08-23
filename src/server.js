@@ -1,5 +1,5 @@
 const { createServer } = require('http')
-const { createReadStream } = require('fs')
+const { createReadStream, existsSync} = require('fs')
 
 const path = require('path')
 const url = require('url')
@@ -11,7 +11,7 @@ class Server {
 	constructor() {
 		this.routes = this.config('get', 'post')
 		this.server = this.initialize()
-
+		this.attrs = {}
 		return this
 	}
 	serve(dir) {
@@ -20,6 +20,9 @@ class Server {
 				this.all(file.replace(dir, ''), (req, res) => res.sendFile(file))
 			})
 		})
+	}
+	set(attr, val) {
+		this.attrs[attr.toLowerCase().replace(/ /g, '_')] = val
 	}
 	process(cb) {
 		return ((...params) => {
@@ -76,13 +79,14 @@ class Server {
 				})
 			},
 			sendFile: (file) => {
+				file = path.join(this.attrs.views || '', file)
 				const ext = String(path.extname(file))
 				const content = utils.type[ext] || 'application/octet-stream'
 				const headers = {
 					'Content-Type': content
 				}
 				res.writeHead(200, headers)
-				if (fs.existsSync(file)) {
+				if (existsSync(file)) {
 					createReadStream(file).pipe(res)				
 				}
 				else {
