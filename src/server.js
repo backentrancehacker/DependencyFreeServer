@@ -116,7 +116,10 @@ class Server {
 					add.body = body.toString()
 			}
 		}
-		
+		else if(req.method == 'GET') {
+			const body = url.parse(req.url, { parseQueryString: true }).query
+			add.query = body
+		}
 		return add
 	}
 	initialize() {

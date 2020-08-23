@@ -4,7 +4,7 @@ const app = new Server()
 
 
 app.get('/', (req, res) => {
-	res.send('a')
+	res.send(req.query || 'Enter a query string')
 })
 app.post('/', (req, res) => {
 	res.send(req.body)
