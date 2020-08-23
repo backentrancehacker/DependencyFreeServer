@@ -1,9 +1,9 @@
 const { createServer } = require('http')
-const { createReadStream, existsSync} = require('fs')
 
+const query = require('querystring')
 const path = require('path')
 const url = require('url')
-const query = require('querystring')
+const fs = require('fs')
 
 const utils = require('./utils')
 
@@ -62,7 +62,7 @@ class Server {
 				res.statusCode = code
 				return Object.assign({}, res, add)
 			},
-			send: (data, headers) => {
+			send: (data, headers={}) => {
 				for(const key in headers) {
 					res.setHeader(key, headers[key]);
 				}
@@ -85,9 +85,28 @@ class Server {
 				const headers = {
 					'Content-Type': content
 				}
-				res.writeHead(200, headers)
-				if (existsSync(file)) {
-					createReadStream(file).pipe(res)				
+				if (fs.existsSync(file)) {
+					res.writeHead(200, headers)
+					fs.createReadStream(file).pipe(res)				
+				}
+				else {
+					throw new Error('File does not exist')
+				}
+			},
+			render: (file, json) => {
+				file = path.join(this.attrs.views || '', file)
+				const ext = String(path.extname(file))
+				const content = utils.type[ext] || 'application/octet-stream'
+				const headers = {
+					'Content-Type': content
+				}
+				if (fs.existsSync(file)) {
+					let details = fs.readFileSync(file, 'utf-8')
+					for(const key in json) {
+						let p = new RegExp(`{{${key}}}`, 'g')
+						details = details.replace(p, json[key])
+					}
+					res.send(details, headers)
 				}
 				else {
 					throw new Error('File does not exist')
