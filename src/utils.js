@@ -48,8 +48,11 @@ const type = {
 	'.wasm': 'application/wasm'
 }
 
+const clean = json => JSON.parse(JSON.stringify(json))
+
 module.exports = {
 	walk,
 	cookies,
-	type
+	type,
+	clean
 }

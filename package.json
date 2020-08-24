@@ -1,0 +1,23 @@
+{
+  "name": "DependencyFreeServer",
+  "version": "1.0.0",
+  "description": "Dependency free server modeled after express",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/backentrancehacker/DependencyFreeServer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/backentrancehacker/DependencyFreeServer/issues"
+  },
+  "homepage": "https://github.com/backentrancehacker/DependencyFreeServer#readme",
+  "dependencies": {
+    "qs": "^6.9.4"
+  }
+}

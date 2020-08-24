@@ -1,6 +1,6 @@
 const { createServer } = require('http')
 
-const query = require('querystring')
+const query = require('qs')
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
@@ -128,9 +128,9 @@ class Server {
 					resolve(data)
 				})
 			})
-			switch(req.headers['Content-Type']) {
+			switch(req.headers['content-type']) {
 				case 'application/x-www-form-urlencoded': 
-					add.query = query.parse(body)
+					add.form = query.parse(body)
 					break
 				case 'application/json': 
 					add.body = JSON.parse(body)
@@ -141,7 +141,7 @@ class Server {
 		}
 		else if(req.method == 'GET') {
 			const body = url.parse(req.url, { parseQueryString: true }).query
-			add.query = body
+			add.query = utils.clean(body)
 		}
 		return add
 	}
@@ -152,9 +152,9 @@ class Server {
 			const { pathname } = url.parse(req.url)
 			const exec = this.routes[req.method][pathname || '404'] || ((req, res) => res.status(404).send(`Could not ${req.method} ${pathname}`))
 			
-			Object.assign(res, this.resMethods(res))
-			Object.assign(req, await this.reqMethods(req))
-			exec(req, res)
+			const _res = Object.assign({}, res, this.resMethods(res))
+			const _req = Object.assign({}, req, await this.reqMethods(req))
+			exec(_req, _res)
 		})
 
 		return server
